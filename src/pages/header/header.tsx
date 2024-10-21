@@ -1,7 +1,6 @@
 "use client"
 import { Roboto } from 'next/font/google';
 import Nav from '../nav/nav';
-import { Dispatch, SetStateAction } from 'react';
 const roboto = Roboto({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
@@ -10,10 +9,10 @@ const roboto = Roboto({
 interface HeaderProps {
     toggleMenu: () => void; 
     isMenuOpen: boolean;
-    setOpenModalCriar: Dispatch<SetStateAction<boolean>>; 
+    setOpenModalCreate: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Header({toggleMenu, isMenuOpen,setOpenModalCriar}:HeaderProps) {
+export default function Header({toggleMenu, isMenuOpen,setOpenModalCreate}:HeaderProps) {
     
 
   
@@ -49,7 +48,7 @@ export default function Header({toggleMenu, isMenuOpen,setOpenModalCriar}:Header
         </div>
 
         <div className='flex flex-row items-center justify-center ml-[35px] mr-[33px]'>
-            <button  onClick={()=> setOpenModalCriar(true)} className="hover:bg-colorInput active:bg-colorInput rounded-full w-[40px] h-[40px] flex items-center justify-center"> 
+            <button  onClick={()=> setOpenModalCreate(true)} className="hover:bg-colorInput active:bg-colorInput rounded-full w-[40px] h-[40px] flex items-center justify-center"> 
                 <img src='/images/iconCreate.png' alt='Botão de criar items'/>
             </button>
             <button className="hover:bg-colorInput active:bg-colorInput rounded-full w-[40px] h-[40px]  flex items-center justify-center"> 

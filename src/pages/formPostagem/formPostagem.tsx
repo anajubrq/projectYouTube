@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Roboto } from "next/font/google";
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -23,17 +23,17 @@ const schema = z.object({
   videoCover: z.any()
 });
 
-export type IPostagens = z.infer<typeof schema>;
+export type IPosts = z.infer<typeof schema>;
 
 interface IFormsProps {
-  setOpenModalCriar: React.Dispatch<React.SetStateAction<boolean>>;
-  isOpenModalCriar: boolean;
-  postagens: IPostagens[];
-  setPostagens: React.Dispatch<React.SetStateAction<IPostagens[]>>;
+  setOpenModalCreate: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpenModalCreate: boolean;
+  posts: IPosts[];
+  setPosts: React.Dispatch<React.SetStateAction<IPosts[]>>;
 }
 
-export default function FormPostagens({ setOpenModalCriar, isOpenModalCriar, postagens = [], setPostagens }: IFormsProps) {
-  const form = useForm<IPostagens>({
+export default function FormPostagens({ setOpenModalCreate, isOpenModalCreate, posts = [], setPosts }: IFormsProps) {
+  const form = useForm<IPosts>({
     resolver: zodResolver(schema),
     defaultValues: { user: "", title: "", description: "", profilePicture: "", videoCover: "" }
   });
@@ -41,52 +41,44 @@ export default function FormPostagens({ setOpenModalCriar, isOpenModalCriar, pos
   const { handleSubmit, reset, setValue } = form;
 
 
-  const addPostagem: SubmitHandler<IPostagens> = async (data) => {
-    const reader = new FileReader();
-    const videoCoverReader = new FileReader();
+  const addPost: SubmitHandler<IPosts> = async (data) => {
+    console.log(data, "data:")
+    console.log(data.profilePicture[0])
+    
+    const profilePictureUrl = data.profilePicture[0] ? URL.createObjectURL(data.profilePicture[0]) : "";
+    const videoCoverUrl = data.videoCover[0] ? URL.createObjectURL(data.videoCover[0]) : "";
 
-    reader.onloadend = () => {
-      const profilePictureUrl = reader.result as string;
+    console.log(profilePictureUrl)
+    
+    console.log(videoCoverUrl)
 
-      videoCoverReader.onloadend = () => {
-        const videoCoverUrl = videoCoverReader.result as string;
-        const newPostagem = {
-          ...data,
-          profilePicture: profilePictureUrl,
-          videoCover: videoCoverUrl,
-          id: postagens.length ? postagens[postagens.length - 1].id! + 1 : 1 
-        };
-        setPostagens((prevPostagens) => [...prevPostagens, newPostagem]);
-        console.log("postagens:", postagens)
+      const newPost = {
+       ...data,
+        profilePicture: profilePictureUrl,
+      videoCover: videoCoverUrl,
+      id: posts.length ? posts[posts.length - 1].id! + 1 : 1 
+       };
+       const newPosts = [
+        ...posts, newPost
+        ]
+        setPosts(newPosts);
+       localStorage.setItem('posts', JSON.stringify(newPosts))
+        console.log("posts:", posts)
         reset();
-        setOpenModalCriar(false);
-      };
+         setOpenModalCreate(false);
+         };
      
-      
-      if (data.videoCover && data.videoCover.length > 0) {
-        videoCoverReader.readAsDataURL(data.videoCover[0]);
-      }
-    };
 
-    if (data.profilePicture && data.profilePicture.length > 0) {
-      reader.readAsDataURL(data.profilePicture[0]);
-    }
-  };
 
-  useEffect(() => {
-    localStorage.setItem('postagens', JSON.stringify(postagens))
-    console.log("dentro do useEffect")
-    console.log(localStorage);
-  }, [postagens]);
 
-  if (!isOpenModalCriar) return null;
+  if (!isOpenModalCreate) return null;
 
   return (
     <section className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center z-10">
       <div className={`${roboto.className} bg-slate-100 p-8 rounded-[20px]`}>
         <h1 className='mb-4 font-bold text-2xl'>Add a new post</h1>
         <Form {...form}>
-          <form onSubmit={handleSubmit(addPostagem)} className="formulario">
+          <form onSubmit={handleSubmit(addPost)} className="formulario">
             <FormField
               name="user"
               render={({ field }) => (
@@ -167,7 +159,7 @@ export default function FormPostagens({ setOpenModalCriar, isOpenModalCriar, pos
             />
 
             <Button className='mr-4' type="submit">Add Postagem</Button>
-            <Button type="button" className="mt-4" onClick={() => setOpenModalCriar(false)}>
+            <Button type="button" className="mt-4" onClick={() => setOpenModalCreate(false)}>
               Cancel
             </Button>
           </form>
