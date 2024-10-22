@@ -1,6 +1,8 @@
 "use client"
 import { Roboto } from 'next/font/google';
 import Nav from '../nav/nav';
+import { useRouter } from "next/navigation";
+
 const roboto = Roboto({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
@@ -13,11 +15,7 @@ interface HeaderProps {
 }
 
 export default function Header({toggleMenu, isMenuOpen,setOpenModalCreate}:HeaderProps) {
-    
-
-  
-  
-
+    const router = useRouter();
   return (
     
         <div className={`${roboto.className} w-full h-[56px] bg-customGray flex flex-row items-center justify-between fixed top-0 left-0 z-1000`}>
@@ -30,7 +28,8 @@ export default function Header({toggleMenu, isMenuOpen,setOpenModalCreate}:Heade
     <img src="/images/Group.png" className="w-[20px] h-[20px] " alt="Menu" />
     </button>
 
-        <button className='ml-[6px]'> <img src="/images/Youtube-Logo.png" className="w-[90px] h-[20px]" alt="logo" /> </button>
+        <button onClick={() => router.push('/')}
+         className='ml-[6px]'>  <img src="/images/Youtube-Logo.png" className="w-[90px] h-[20px]" alt="logo" /> </button>
         </div>
 
         <div className='flex flex-row items-center '>

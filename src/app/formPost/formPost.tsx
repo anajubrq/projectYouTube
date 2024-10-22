@@ -22,7 +22,6 @@ const schema = z.object({
   profilePicture: z.any(),
   videoCover: z.any()
 });
-
 export type IPosts = z.infer<typeof schema>;
 
 interface IFormsProps {
@@ -35,41 +34,56 @@ interface IFormsProps {
 export default function FormPostagens({ setOpenModalCreate, isOpenModalCreate, posts = [], setPosts }: IFormsProps) {
   const form = useForm<IPosts>({
     resolver: zodResolver(schema),
-    defaultValues: { user: "", title: "", description: "", profilePicture: "", videoCover: "" }
+    defaultValues: {
+      user: '',
+      title: '',
+      description: '',
+      profilePicture: null,
+      videoCover: null
+    }
   });
 
   const { handleSubmit, reset, setValue } = form;
 
-
   const addPost: SubmitHandler<IPosts> = async (data) => {
-    console.log(data, "data:")
-    console.log(data.profilePicture[0])
+    const arquivoParaBase64 = (arquivo: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const leitor = new FileReader();
+        leitor.readAsDataURL(arquivo);
+        leitor.onload = () => resolve(leitor.result as string);
+        leitor.onerror = (erro) => reject(erro);
+      });
+    };
+
+    const fotoPerfil_Base64 = data.profilePicture?.[0] 
+      ? await arquivoParaBase64(data.profilePicture[0])
+      : "";
     
-    const profilePictureUrl = data.profilePicture[0] ? URL.createObjectURL(data.profilePicture[0]) : "";
-    const videoCoverUrl = data.videoCover[0] ? URL.createObjectURL(data.videoCover[0]) : "";
+    const capaVideo_Base64 = data.videoCover?.[0]
+      ? await arquivoParaBase64(data.videoCover[0])
+      : "";
 
-    console.log(profilePictureUrl)
+    const novoPost = {
+      ...data,
+      profilePicture: fotoPerfil_Base64,
+      videoCover: capaVideo_Base64,
+      id: posts.length > 0 ? (posts[posts.length - 1]?.id ?? 0) + 1 : 1
+    };
+    const novoPosts = [...posts, novoPost];
     
-    console.log(videoCoverUrl)
+    setPosts(novoPosts);
+    localStorage.setItem('posts', JSON.stringify(novoPosts));
+    console.log("posts:", novoPosts);
+    reset();
+    setOpenModalCreate(false);
+  };
 
-      const newPost = {
-       ...data,
-        profilePicture: profilePictureUrl,
-      videoCover: videoCoverUrl,
-      id: posts.length ? posts[posts.length - 1].id! + 1 : 1 
-       };
-       const newPosts = [
-        ...posts, newPost
-        ]
-        setPosts(newPosts);
-       localStorage.setItem('posts', JSON.stringify(newPosts))
-        console.log("posts:", posts)
-        reset();
-         setOpenModalCreate(false);
-         };
-     
-
-
+  React.useEffect(() => {
+    const postsDoLocalStorage = localStorage.getItem('posts');
+    if (postsDoLocalStorage) {
+      setPosts(JSON.parse(postsDoLocalStorage));
+    }
+  }, [setPosts]);
 
   if (!isOpenModalCreate) return null;
 

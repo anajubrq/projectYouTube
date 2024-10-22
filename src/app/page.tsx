@@ -1,8 +1,8 @@
 "use client";
-import FormPostagens, {  IPosts } from "@/pages/formPostagem/formPostagem";
-import Header from "@/pages/header/header";
-import Itens from "@/pages/itens/itens";
-import View from "@/pages/viewPostagem/viewPostagem";
+import FormPostagens, {  IPosts } from "@/app/formPost/formPost";
+import Header from "@/app/header/header";
+import Itens from "@/app/itens/itens";
+import View from "@/app/viewPost/viewPost";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -11,17 +11,20 @@ export default function Home() {
   const [openModalCreate, setOpenModalCreate] = useState(false);
 
   useEffect(() => {
-    const storedPostagens = localStorage.getItem('postagens');
+    const storedPostagens = localStorage.getItem('posts');
     if (storedPostagens) {
       setPosts(JSON.parse(storedPostagens));
     }
   }, []);
 
-  
-
-
-  const toggleMenu = () => {
+    const toggleMenu = () => {
     setIsMenuOpen((prevState) => !prevState);
+  };
+
+  const deletePostagem = (id: number) => {
+    const updatedPosts = post.filter(posts => posts.id !== id);
+    setPosts(updatedPosts);
+    localStorage.setItem('posts', JSON.stringify(updatedPosts)); 
   };
 
   return (
@@ -33,8 +36,7 @@ export default function Home() {
       />
       <Itens isOpen={isMenuOpen} />
       <FormPostagens
-      
-      setPosts={setPosts}
+         setPosts={setPosts}
       isOpenModalCreate={openModalCreate}
         setOpenModalCreate={setOpenModalCreate}
         posts={post}
@@ -43,6 +45,7 @@ export default function Home() {
       isOpen={isMenuOpen}
       posts={post}
       setPosts={setPosts}
+      deletePostagem={deletePostagem}
       />
     </div>
   );
