@@ -62,19 +62,12 @@ export default function MainContentDisplay({ posts, selectedPost, setPosts, isOp
                         onClick={() => setPostEdit(selectedPost)}
                       >
                         <img
-                          src="/images/iconeEditar.png"
+                          src="/images/bt3pontos.png"
                           alt="Icone de editar"
                           className="w-[20px] h-[20px]"
                         />
                       </button>
-                      {postEdit && (
-                        <EditPost
-                        isOpenModalEdit={!!postEdit}
-                          setOpenModalEdit={() => setPostEdit(undefined)}
-                          postToEdit={postEdit}
-                          setPosts={setPosts}
-                        />
-                      )}
+                     
                     </li>
                   </ul>
                 </div>
