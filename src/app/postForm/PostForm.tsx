@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Roboto } from "next/font/google";
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -31,7 +31,7 @@ interface IFormsProps {
   setPosts: React.Dispatch<React.SetStateAction<IPosts[]>>;
 }
 
-export default function FormPostagens({ setOpenModalCreate, isOpenModalCreate, posts = [], setPosts }: IFormsProps) {
+export default function PostForm({ setOpenModalCreate, isOpenModalCreate, posts = [], setPosts }: IFormsProps) {
   const form = useForm<IPosts>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -46,44 +46,44 @@ export default function FormPostagens({ setOpenModalCreate, isOpenModalCreate, p
   const { handleSubmit, reset, setValue } = form;
 
   const addPost: SubmitHandler<IPosts> = async (data) => {
-    const arquivoParaBase64 = (arquivo: File): Promise<string> => {
+    const fileForBase64 = (file: File): Promise<string> => {
       return new Promise((resolve, reject) => {
-        const leitor = new FileReader();
-        leitor.readAsDataURL(arquivo);
-        leitor.onload = () => resolve(leitor.result as string);
-        leitor.onerror = (erro) => reject(erro);
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (erro) => reject(erro);
       });
     };
 
-    const fotoPerfil_Base64 = data.profilePicture?.[0] 
-      ? await arquivoParaBase64(data.profilePicture[0])
+    const photoPerfil_Base64 = data.profilePicture?.[0] 
+      ? await fileForBase64(data.profilePicture[0])
       : "";
     
     const capaVideo_Base64 = data.videoCover?.[0]
-      ? await arquivoParaBase64(data.videoCover[0])
+      ? await fileForBase64(data.videoCover[0])
       : "";
 
-    const novoPost = {
+    const newPost = {
       ...data,
-      profilePicture: fotoPerfil_Base64,
+      profilePicture: photoPerfil_Base64,
       videoCover: capaVideo_Base64,
       id: posts.length > 0 ? (posts[posts.length - 1]?.id ?? 0) + 1 : 1
     };
-    const novoPosts = [...posts, novoPost];
+    const newPosts = [...posts, newPost];
     
-    setPosts(novoPosts);
-    localStorage.setItem('posts', JSON.stringify(novoPosts));
-    console.log("posts:", novoPosts);
+    setPosts(newPosts);
+    localStorage.setItem('posts', JSON.stringify(newPosts));
+    console.log("posts:", newPosts);
     reset();
     setOpenModalCreate(false);
   };
 
-  React.useEffect(() => {
-    const postsDoLocalStorage = localStorage.getItem('posts');
-    if (postsDoLocalStorage) {
-      setPosts(JSON.parse(postsDoLocalStorage));
+  useEffect(() => {
+    const storedPosts = localStorage.getItem('posts');
+    if (storedPosts) {
+        setPosts(JSON.parse(storedPosts));
     }
-  }, [setPosts]);
+}, []);
 
   if (!isOpenModalCreate) return null;
 
@@ -172,7 +172,7 @@ export default function FormPostagens({ setOpenModalCreate, isOpenModalCreate, p
               )}
             />
 
-            <Button className='mr-4' type="submit">Add Postagem</Button>
+            <Button className='mr-4' type="submit">Add Post</Button>
             <Button type="button" className="mt-4" onClick={() => setOpenModalCreate(false)}>
               Cancel
             </Button>

@@ -1,19 +1,20 @@
 "use client";
-import FormPostagens, {  IPosts } from "@/app/formPost/formPost";
 import Header from "@/app/header/header";
-import Itens from "@/app/itens/itens";
-import View from "@/app/viewPost/viewPost";
+import ListOfPosts from "@/app/listOfPosts/ListOfPosts";
 import { useEffect, useState } from "react";
+import { IPosts } from "./postEdit/PostEditForm";
+import ListOfItems from "./listOfItems/ListOfItems";
+import PostForm from "./postForm/PostForm";
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const [post, setPosts] = useState<IPosts[]>([]);
+  const [posts, setPosts] = useState<IPosts[]>([]);
   const [openModalCreate, setOpenModalCreate] = useState(false);
 
   useEffect(() => {
-    const storedPostagens = localStorage.getItem('posts');
-    if (storedPostagens) {
-      setPosts(JSON.parse(storedPostagens));
+    const storedPosts = localStorage.getItem('posts');
+    if (storedPosts) {
+      setPosts(JSON.parse(storedPosts));
     }
   }, []);
 
@@ -21,8 +22,14 @@ export default function Home() {
     setIsMenuOpen((prevState) => !prevState);
   };
 
-  const deletePostagem = (id: number) => {
-    const updatedPosts = post.filter(posts => posts.id !== id);
+  const [searchPost, setSearchPost] = useState("");
+ 
+  const filteredPosts = posts.filter(posts => 
+    posts.title.toLowerCase().includes(searchPost.toLowerCase()) 
+);
+
+  const deletePost = (id: number) => {
+    const updatedPosts = posts.filter(posts => posts.id !== id);
     setPosts(updatedPosts);
     localStorage.setItem('posts', JSON.stringify(updatedPosts)); 
   };
@@ -30,22 +37,23 @@ export default function Home() {
   return (
     <div>
       <Header 
+      setSearchPost={setSearchPost}
+      searchPost={searchPost}
         toggleMenu={toggleMenu} 
         isMenuOpen={isMenuOpen} 
         setOpenModalCreate={setOpenModalCreate}
       />
-      <Itens isOpen={isMenuOpen} />
-      <FormPostagens
+      <ListOfItems isOpen={isMenuOpen} />
+      <PostForm
          setPosts={setPosts}
       isOpenModalCreate={openModalCreate}
         setOpenModalCreate={setOpenModalCreate}
-        posts={post}
+        posts={posts}
       />
-      <View
+      <ListOfPosts
       isOpen={isMenuOpen}
-      posts={post}
-      setPosts={setPosts}
-      deletePostagem={deletePostagem}
+      posts={filteredPosts}
+      deletePost={deletePost}
       />
     </div>
   );

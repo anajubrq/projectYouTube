@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button"; 
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Roboto } from "next/font/google";
+import React, { useEffect } from 'react';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -15,72 +15,78 @@ const roboto = Roboto({
 });
 
 const schema = z.object({
-  id: z.number(),
+  id: z.number().optional(), 
   user: z.string().min(1, { message: 'User is required' }),
   title: z.string().min(1, { message: 'Title is mandatory' }),
   description: z.string().min(1, { message: 'Description is mandatory' }),
-  profilePicture: z.any(), 
-  videoCover: z.any() 
+  profilePicture: z.any(),
+  videoCover: z.any()
 });
+export type IPosts = z.infer<typeof schema>;
 
-export type IPostagens = z.infer<typeof schema>;
-
-interface IEditProps {
-  postagens: IPostagens; 
-  onEditPostagem: (updatedPostagem: IPostagens) => void; 
-  setOpenModalCriar: React.Dispatch<React.SetStateAction<boolean>>;
-  isOpenModalCriar: boolean;
+interface IFormsProps {
+  setOpenModalEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpenModalEdit: boolean;
+  posts: IPosts[];
+  setPosts: React.Dispatch<React.SetStateAction<IPosts[]>>;
 }
 
-export default function EditPostagens({ postagens, onEditPostagem, isOpenModalCriar, setOpenModalCriar }: IEditProps) {
-  const form = useForm<IPostagens>({
+export default function FormPosts({ setOpenModalEdit, isOpenModalEdit, posts, setPosts }: IFormsProps) {
+  const form = useForm<IPosts>({
     resolver: zodResolver(schema),
-    defaultValues: postagens,
+    defaultValues: posts
   });
 
   const { handleSubmit, reset, setValue } = form;
 
-  useEffect(() => {
-    if (!isOpenModalCriar) {
-      reset();
-    } else {
-      reset(postagens); 
-    }
-  }, [isOpenModalCriar, postagens, reset]);
-
-  const addPostagem: SubmitHandler<IPostagens> = (data) => {
-    const reader = new FileReader();
-    const videoCoverReader = new FileReader();
-
-    reader.onloadend = () => {
-      const profilePicture = reader.result as string;
-
-      videoCoverReader.onloadend = () => {
-        const videoCover = videoCoverReader.result as string;
-        const updatedPostagem = { ...data, profilePicture, videoCover };
-        onEditPostagem(updatedPostagem); 
-        setOpenModalCriar(false); 
-        reset(); 
-      };
-
-      if (data.videoCover && data.videoCover.length > 0) {
-        videoCoverReader.readAsDataURL(data.videoCover[0]);
-      }
+  const addPost: SubmitHandler<IPosts> = async (data) => {
+    const fileForBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (erro) => reject(erro);
+      });
     };
 
-    if (data.profilePicture && data.profilePicture.length > 0) {
-      reader.readAsDataURL(data.profilePicture[0]); 
-    }
+    const photoPerfil_Base64 = data.profilePicture?.[0] 
+      ? await fileForBase64(data.profilePicture[0])
+      : "";
+    
+    const capaVideo_Base64 = data.videoCover?.[0]
+      ? await fileForBase64(data.videoCover[0])
+      : "";
+
+    const newPost = {
+      ...data,
+      profilePicture: photoPerfil_Base64,
+      videoCover: capaVideo_Base64,
+      id: posts.length > 0 ? (posts[posts.length - 1]?.id ?? 0) + 1 : 1
+    };
+    const newPosts = [...posts, newPost];
+    
+    setPosts(newPosts);
+    localStorage.setItem('posts', JSON.stringify(newPosts));
+    console.log("posts:", newPosts);
+    reset();
+    setOpenModalEdit(false);
   };
 
-  if (!isOpenModalCriar) return null; 
+  useEffect(() => {
+    const storedPosts = localStorage.getItem('posts');
+    if (storedPosts) {
+        setPosts(JSON.parse(storedPosts));
+    }
+}, []);
+
+  if (!isOpenModalEdit) return null;
 
   return (
     <section className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center z-10">
-      <div className={`${roboto.className} flex flex-col justify-center items-center w-full h-screen bg-slate-100 p-8 rounded-[20px]`}>
-        <h1 className='mb-4 font-bold text-2xl'>Edit Post</h1>
+      <div className={`${roboto.className} bg-slate-100 p-8 rounded-[20px]`}>
+        <h1 className='mb-4 font-bold text-2xl'>Add a new post</h1>
         <Form {...form}>
-          <form onSubmit={handleSubmit(addPostagem)} className="formulario">
+          <form onSubmit={handleSubmit(addPost)} className="formulario">
             <FormField
               name="user"
               render={({ field }) => (
@@ -124,12 +130,12 @@ export default function EditPostagens({ postagens, onEditPostagem, isOpenModalCr
                   <FormLabel>Profile Photo</FormLabel>
                   <FormControl>
                     <input
-                    placeholder='Select an image'
+                      placeholder='Select an image'
                       type="file"
                       accept="image/*"
                       onChange={(e) => {
                         if (e.target.files) {
-                          setValue("profilePicture", e.target.files); 
+                          setValue("profilePicture", e.target.files);
                         }
                       }}
                     />
@@ -145,12 +151,12 @@ export default function EditPostagens({ postagens, onEditPostagem, isOpenModalCr
                   <FormLabel>Video Cover Image</FormLabel>
                   <FormControl>
                     <input
-                    placeholder='Select an image'
+                      placeholder='Select an image'
                       type="file"
                       accept="image/*"
                       onChange={(e) => {
                         if (e.target.files) {
-                          setValue("videoCover", e.target.files); 
+                          setValue("videoCover", e.target.files);
                         }
                       }}
                     />
@@ -160,12 +166,10 @@ export default function EditPostagens({ postagens, onEditPostagem, isOpenModalCr
               )}
             />
 
-            <div className="flex justify-end mt-4">
-              <Button className='mr-2' type="submit">Save Changes</Button>
-              <Button type="button" onClick={() => setOpenModalCriar(false)}>
-                Cancel
-              </Button>
-            </div>
+            <Button className='mr-4' type="submit">Add Post</Button>
+            <Button type="button" className="mt-4" onClick={() => setOpenModalEdit(false)}>
+              Cancel
+            </Button>
           </form>
         </Form>
       </div>

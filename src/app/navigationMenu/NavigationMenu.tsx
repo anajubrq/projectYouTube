@@ -1,17 +1,16 @@
 import { Roboto } from 'next/font/google';
-import { title } from 'process';
 
 const roboto = Roboto({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
 });
 
-export interface INavProps{
+export interface INavigationMenuProps{
     isOpen: boolean;
     
     
 }
-const listItems1 = [{
+const listOfItems1 = [{
   title: 'Home',
   imgSrc : '/images/home-fill.png ',
    
@@ -26,7 +25,7 @@ const listItems1 = [{
 }
 ]
 
-const listItems2 = [
+const listOfItems2 = [
   {
     title: 'Library',
     imgSrc : '/images/library.png'
@@ -54,7 +53,7 @@ const listItems2 = [
 ]
 
 
-const listItems3 = [
+const listOfItems3 = [
   {
     title: 'James Gomes',
     imgSrc : '/images/jamesUser.png'
@@ -89,7 +88,7 @@ const listItems3 = [
 ]
 
 
-const listItems4 = [
+const listOfItems4 = [
   {
     title: 'Youtube Premium',
     imgSrc : '/images/youTubePremium.png'
@@ -105,12 +104,12 @@ const listItems4 = [
 ]
 
 
-export default function Nav({isOpen}:INavProps){
+export default function NavigationMenu({isOpen}:INavigationMenuProps){
     return(
         <div className={`  w-[240px] h-screen mt-[56px] absolute top-0 left-0 text-white transition-transform duration-300 ease-in-out bg-customGray ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
             <div className='w-[224px] '>
                 <ul className='ml-[11px]  '>
-                  {listItems1.map((item, index)=> <li key={`listItemNav-${index}`} className={`${roboto.className} p-[12px] text-[14px] flex flex-row items-center justify-start ml-[9px]  w-[210px] h-[41px]  hover:bg-colorBoder  
+                  {listOfItems1.map((item, index)=> <li key={`listItemNav-${index}`} className={`${roboto.className} p-[12px] text-[14px] flex flex-row items-center justify-start ml-[9px]  w-[210px] h-[41px]  hover:bg-colorBoder  
                     text-white rounded-[10px]`}>
                     <img className='w-[24px] h-[24px]' src={item.imgSrc} alt="Icone Home"/>
                     <p className='ml-[24px]'>{item.title}</p>
@@ -120,7 +119,7 @@ export default function Nav({isOpen}:INavProps){
             </div>
             <div className='border-t border-b border-colorBoder'>
             <ul className='ml-[11px]'>
-              {listItems2.map((item,index)=>
+              {listOfItems2.map((item,index)=>
               <li key={`ListIetemNav2-${index}`} className={`${roboto.className} p-[12px] text-[14px] flex flex-row items-center justify-start ml-[9px]  w-[210px] h-[41px]  hover:bg-colorBoder  
               text-white rounded-[10px]`} >
                 <img className='w-[24px] h-[24px]' src={item.imgSrc} alt='Imagem' />
@@ -132,7 +131,7 @@ export default function Nav({isOpen}:INavProps){
             <div className=' border-b border-colorBoder'>
                 <p className={`${roboto.className} text-[14px] flex flex-row items-center justify-start ml-[18px] w-[156px] h-[41px] uppercase text-colorFont`}>Subscriptions</p>
                 <ul className='ml-[11px]'>
-                  {listItems3.map((item,index)=>
+                  {listOfItems3.map((item,index)=>
                   <li key={`ListItemNav3-${index}`} className={`${roboto.className} p-[12px] text-[14px] flex flex-row items-center justify-start ml-[9px]  w-[210px] h-[41px]  hover:bg-colorBoder  
                   text-white rounded-[10px]`} >
                      <img src={item.imgSrc} alt={`Imagem User ${item.title}`}/>
@@ -146,7 +145,7 @@ export default function Nav({isOpen}:INavProps){
             <div className=' border-b border-colorBoder '>
                 <p className={`${roboto.className} text-[14px] flex flex-row items-center justify-start ml-[18px]  w-[210px] h-[41px] uppercase text-colorFont`}>More From Youtube</p>
                 <ul className='ml-[11px] '>
-                  {listItems4.map((item,index)=>
+                  {listOfItems4.map((item,index)=>
                   <li key={`ListItemNav4-${index}`} className={`${roboto.className} p-[12px] text-[14px] flex flex-row items-center justify-start ml-[9px]  w-[210px] h-[41px]  hover:bg-colorBoder  
                   text-white rounded-[10px]`}>
                      <img src={item.imgSrc} alt={`Icone ${item.title}`}/>

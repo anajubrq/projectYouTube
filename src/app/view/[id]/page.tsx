@@ -1,44 +1,46 @@
 "use client";
-import { IPosts } from "@/app/formPost/formPost";
 import Header from "@/app/header/header";
-import Main02 from "@/app/main02/main02";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation"; 
+import MaincontentDisplay from "@/app/mainContentDisplay/MaincontentDisplay";
+import { IPosts } from "@/app/postEdit/PostEditForm";
 
 export default function View02() {
     const [isMenuOpen, setIsMenuOpen] = useState(true);
-    const [posts, setPosts] = useState<IPosts[]>([]);
+    const [post, setPost] = useState<IPosts[]>([]);
     const [openModalCreate, setOpenModalCreate] = useState(false);
-    const router = useRouter();
+    const [searchPost, setSearchPost] = useState("");
     const pathname = usePathname(); 
+
     
     const toggleMenu = () => {
       setIsMenuOpen((prevState) => !prevState);
     };
 
     useEffect(() => {
-        const storedPostagens = localStorage.getItem('posts');
-        if (storedPostagens) {
-            setPosts(JSON.parse(storedPostagens));
-        }
-    }, []);
+      const storedPosts = localStorage.getItem('posts');
+      if (storedPosts) {
+          setPost(JSON.parse(storedPosts));
+      }
+  }, []);
     
     const postId = pathname.split('/').pop(); 
-    const postToShow = posts.find((post) => post.id === Number(postId));
+    const postToShow = post.find((post) => post.id === Number(postId));
 
     return (
         <div>
             <Header
+            setSearchPost={setSearchPost}
+            searchPost={searchPost}
                 toggleMenu={toggleMenu}
                 isMenuOpen={isMenuOpen}
                 setOpenModalCreate={setOpenModalCreate}
             />
-            <Main02 
+            <MaincontentDisplay 
                 isOpen={isMenuOpen}
-                posts={posts} 
+                posts={post} 
                 selectedPost={postToShow} 
-                setPosts={setPosts}
+                setPosts={setPost}
             />
         </div>
     );

@@ -1,22 +1,24 @@
 "use client";
-import { IPosts } from "../formPost/formPost";
 import { Roboto } from "next/font/google";
 import { useRouter } from "next/navigation";
+import { IPosts } from "../postEdit/PostEditForm";
 
 const roboto = Roboto({
     subsets: ['latin'],
     weight: ['400', '500', '700'],
 });
 
-interface IView {
+interface IListOfPosts {
     posts: IPosts[];
-    setPosts: React.Dispatch<React.SetStateAction<IPosts[]>>;
     isOpen: boolean;
-    deletePostagem: (id: number) => void;
+    deletePost: (id: number) => void;
+ 
 }
 
-export default function View({ posts, setPosts, isOpen, deletePostagem }: IView) {
+export default function ListOfPosts({ posts, isOpen, deletePost}: IListOfPosts) {
     const router = useRouter();
+
+ 
 
     return (
         <section className={`${isOpen ? 'ml-[270px]' : 'ml-0'} z-30 bg-black w-full h-screen p-4`}>
@@ -44,7 +46,7 @@ export default function View({ posts, setPosts, isOpen, deletePostagem }: IView)
                                 <p className="text-white text-[12px] h-[12px] mt-[10px]">{singlePost.user}</p>
                                 <p className="mt-[2px] text-[11px] h-[12px]">{singlePost.description}</p>
                             </div>
-                            <button onClick={() => singlePost.id !== undefined && deletePostagem(singlePost.id)}>
+                            <button onClick={() => singlePost.id !== undefined && deletePost(singlePost.id)}>
                                 <img className="w-[20px] h-[20px] mb-[6px]" src="/images/delete.png" alt="button delete" />
                             </button>
                         </div>

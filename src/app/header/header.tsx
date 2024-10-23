@@ -1,6 +1,6 @@
 "use client"
 import { Roboto } from 'next/font/google';
-import Nav from '../nav/nav';
+import Nav from '../navigationMenu/NavigationMenu';
 import { useRouter } from "next/navigation";
 
 const roboto = Roboto({
@@ -9,13 +9,18 @@ const roboto = Roboto({
 });
 
 interface HeaderProps {
+   
     toggleMenu: () => void; 
     isMenuOpen: boolean;
-    setOpenModalCreate: React.Dispatch<React.SetStateAction<boolean>>
-}
+    setOpenModalCreate: React.Dispatch<React.SetStateAction<boolean>>;
+    setSearchPost: (value:string)=> void;
+    searchPost: string;
+    }
 
-export default function Header({toggleMenu, isMenuOpen,setOpenModalCreate}:HeaderProps) {
+export default function Header({toggleMenu, isMenuOpen,setOpenModalCreate, setSearchPost, searchPost,}:HeaderProps) {
     const router = useRouter();
+
+
   return (
     
         <div className={`${roboto.className} w-full h-[56px] bg-customGray flex flex-row items-center justify-between fixed top-0 left-0 z-1000`}>
@@ -37,8 +42,11 @@ export default function Header({toggleMenu, isMenuOpen,setOpenModalCreate}:Heade
             type="text" 
             className='w-[362px] h-[38px] bg-colorInput p-[8px] outline-none text-white' 
             placeholder="Search" 
+            value={searchPost}
+            onChange={(e) => setSearchPost(e.target.value)}
+            
             />
-            <button className="h-[40px] w-[55px]  ">
+            <button onClick={()=>console.log('serarchPost Items:',searchPost)} className="h-[40px] w-[55px]  ">
             <img src='/images/lupaPesquisar.png' alt='icon pesquisar'  />
             </button>
             <button className="h-[40px] w-[40px]  ">
