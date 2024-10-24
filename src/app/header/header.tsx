@@ -2,7 +2,7 @@
 import { Roboto } from 'next/font/google';
 import Nav from '../navigationMenu/NavigationMenu';
 import { useRouter } from "next/navigation";
-import Button from '../myComponents/button/button';
+import ButtonIcons from '../myComponents/buttonIcons/ButtonIcons';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -27,26 +27,16 @@ export default function Header({toggleMenu, isMenuOpen,setOpenModalCreate, setSe
         <div className={`${roboto.className} w-full h-[56px] bg-customGray flex flex-row items-center justify-between fixed top-0 left-0 z-1000`}>
         <div className='flex flex-row items-center w-[190px] ml-[22px] '>
 
-            <Button
-        rounded='full'
-        imgSrc="/images/Group.png"
-        altText="Example Image"
-        onClick={toggleMenu}
-        hoverColor="hover:bg-[#121212]" 
-        imgHeight='20px'
-        imgWidth='20px'
-            
-        />
-        
-       
-           
+            <ButtonIcons onClick={toggleMenu} >
+            <img src="/images/Group.png" className="w-[20px] h-[20px] " alt="Menu" />
+            </ButtonIcons>
         {/* <button
     onClick={toggleMenu}
     className="flex items-center justify-center text-white rounded-full transition-colors duration-300 
                 hover:bg-colorInput active:bg-colorInput w-[40px] h-[40px]" 
     >
     <img src="/images/Group.png" className="w-[20px] h-[20px] " alt="Menu" />
-    </button> */}
+    </button>  */}
 
         <button onClick={() => router.push('/')}
          className='ml-[6px]'>  <img src="/images/Youtube-Logo.png" className="w-[90px] h-[20px]" alt="logo" /> </button>

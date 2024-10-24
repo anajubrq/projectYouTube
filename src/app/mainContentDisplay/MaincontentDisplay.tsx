@@ -2,8 +2,7 @@
 
 import { Roboto } from "next/font/google";
 import { useRouter } from "next/navigation";
-import EditPost, { IPosts } from "../postEdit/PostEditForm";
-import { useState } from "react";
+import { IPosts } from "../postEdit/PostEditForm";
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -13,7 +12,6 @@ const roboto = Roboto({
 interface IMaincontentDisplay {
   posts: IPosts[];
   selectedPost?: IPosts;
-  setPosts: React.Dispatch<React.SetStateAction<IPosts[]>>;
   isOpen: boolean;
 }
 
@@ -24,9 +22,9 @@ const listMain = [
   { imgSrc: '/images/btSalve.png' },
 ];
 
-export default function MainContentDisplay({ posts, selectedPost, setPosts, isOpen }: IMaincontentDisplay) {
+export default function MainContentDisplay({ posts, selectedPost, isOpen }: IMaincontentDisplay) {
   const router = useRouter();
-  const [postEdit, setPostEdit] = useState<IPosts | undefined>(undefined);
+ 
 
 
   return (
@@ -59,7 +57,7 @@ export default function MainContentDisplay({ posts, selectedPost, setPosts, isOp
                     <li>
                       <button
                         className="bg-white rounded-full w-[30px] h-[30px] flex justify-center items-center"
-                        onClick={() => setPostEdit(selectedPost)}
+                        
                       >
                         <img
                           src="/images/bt3pontos.png"
